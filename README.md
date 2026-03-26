@@ -1,36 +1,164 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MG Pay - Admin Dashboard
+
+A modern payment gateway admin dashboard built with Next.js 16, TypeScript, and Tailwind CSS.
+
+## Features
+
+- 🔐 **JWT Authentication** - Secure login with automatic token refresh
+- 💳 **Payment Provider Management** - Support for KBZ Pay, Wave Pay, and AYA Pay
+- 📊 **Analytics Dashboard** - Real-time transaction monitoring and reporting
+- 🔑 **API Key Management** - Secure API token generation and management
+- 📱 **Responsive Design** - Works seamlessly on desktop and mobile
+- 🌙 **Dark Mode** - Full dark mode support
+- 🎨 **Modern UI** - Clean, professional interface with green branding
+
+## Tech Stack
+
+- **Framework**: Next.js 16.1.6 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **Charts**: Recharts
+- **Icons**: Lucide React
+- **Theme**: next-themes
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Default Login
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The dashboard will redirect to `/login`. Use your API credentials to authenticate.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+├── (dashboard)/          # Protected dashboard routes
+│   ├── overview/        # Main dashboard
+│   ├── transaction/     # Transaction management
+│   ├── service-apps/    # API integration management
+│   ├── reports/         # Financial reports
+│   ├── payment-methods/ # Provider configuration
+│   ├── webhook-logs/    # API & callback logs
+│   ├── api-keys/        # Security management
+│   ├── users/           # User management
+│   └── ...
+├── components/          # Reusable UI components
+├── lib/
+│   ├── api.ts          # API client with JWT auth
+│   └── data.ts         # TypeScript types & mock data
+├── login/              # Authentication page
+└── providers/          # Context providers
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Integration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The dashboard integrates with the MG Pay API:
 
-## Deploy on Vercel
+- **Base URL**: `http://pg.mmgbpay.com/api`
+- **Authentication**: JWT tokens (Bearer)
+- **Auto-refresh**: Automatic token renewal on expiry
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Key Endpoints
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `POST /admin/login/` - Authentication
+- `GET /admin/dashboard/summary/` - Dashboard metrics
+- `GET /admin/transactions/` - Transaction list
+- `GET /admin/service-apps/` - Service apps management
+- And more...
+
+## Features Overview
+
+### Dashboard
+- Provider balance cards (KBZ Pay, Wave Pay, AYA Pay)
+- Total exported balance
+- Service app performance charts
+- Recent transactions
+
+### Transaction Management
+- Search and filter transactions
+- Filter by service app
+- Pagination support
+- Status tracking (success, pending, failed)
+
+### Service Apps
+- Create and manage integrated applications
+- API token management (masked display)
+- Callback URL configuration
+- Active/inactive status toggle
+
+### Reports
+- Transaction volume analytics
+- Service app performance metrics
+- Provider breakdown
+
+### Security
+- JWT authentication with auto-refresh
+- API key management
+- User roles and permissions
+- Activity logging
+
+## Development
+
+```bash
+# Type check
+npx tsc --noEmit
+
+# Lint
+npm run lint
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+## Environment Variables
+
+Create a `.env.local` file for local development:
+
+```env
+NEXT_PUBLIC_API_URL=http://pg.mmgbpay.com/api
+```
+
+## Color Scheme
+
+- **Primary**: Green-600 (#16a34a)
+- **Secondary**: Emerald-600 (#059669)
+- **Accent**: Teal-600
+
+Provider-specific colors:
+- **KBZ Pay**: Blue
+- **Wave Pay**: Orange
+- **AYA Pay**: Purple
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## License
+
+Proprietary - MG Pay © 2024
+
+## Support
+
+For technical support or questions, refer to the Help & Documentation section in the dashboard.
