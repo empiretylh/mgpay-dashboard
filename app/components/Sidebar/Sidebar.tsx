@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import {
   LayoutDashboard,
   Receipt,
@@ -102,8 +103,8 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
         {/* Logo */}
         <div className="p-6 border-b border-gray-100 dark:border-gray-800">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigate('/overview')}>
-            <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-lg">MG</span>
+            <div className="w-10 h-10 relative flex items-center justify-center drop-shadow-md">
+              <Image src="/mgpay_logo.png" alt="MG PAY Logo" fill className="object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">MG PAY</h1>

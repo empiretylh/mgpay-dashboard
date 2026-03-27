@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { login } from '@/app/lib/api';
 import { LogIn, AlertCircle } from 'lucide-react';
 
@@ -33,8 +34,8 @@ export default function LoginPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-2xl">MG</span>
+            <div className="w-24 h-24 relative flex items-center justify-center drop-shadow-lg mx-auto">
+              <Image src="/mgpay_logo.png" alt="MG PAY Logo" fill className="object-contain" priority />
             </div>
           </div>
 

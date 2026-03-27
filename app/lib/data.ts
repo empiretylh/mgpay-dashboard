@@ -8,6 +8,7 @@ export interface Transaction {
   status: 'success' | 'pending' | 'failed';
   created_at: string;
   reference_id?: string;
+  transaction_id?: string;
 }
 
 export interface ProviderBalance {

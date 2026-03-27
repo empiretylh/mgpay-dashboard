@@ -1,4 +1,4 @@
-const BASE_URL = 'http://pg.mmgbpay.com/api';
+const BASE_URL = 'https://pg.mmgbpay.com/api';
 
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -131,29 +131,29 @@ export async function getDashboardSummary() {
 
 export async function getTransactions(serviceAppId?: number) {
   const query = serviceAppId ? `?service_app=${serviceAppId}` : '';
-  return apiFetch(`/admin/transactions/${query}`);
+  return apiFetch(`/transactions/${query}`);
 }
 
 export async function getServiceApps() {
-  return apiFetch('/admin/service-apps/');
+  return apiFetch('/service-apps/');
 }
 
 export async function createServiceApp(data: { name: string; callback_url: string }) {
-  return apiFetch('/admin/service-apps/', {
+  return apiFetch('/service-apps/', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateServiceApp(id: number, data: any) {
-  return apiFetch(`/admin/service-apps/${id}/`, {
+  return apiFetch(`/service-apps/${id}/`, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteServiceApp(id: number) {
-  return apiFetch(`/admin/service-apps/${id}/`, {
+  return apiFetch(`/service-apps/${id}/`, {
     method: 'DELETE',
   });
 }
@@ -170,33 +170,33 @@ export async function createBalanceExport(data: { service_app: number; amount: s
 }
 
 export async function getAllowedHosts() {
-  return apiFetch('/admin/allowed-hosts/');
+  return apiFetch('/allowed-hosts/');
 }
 
 export async function createAllowedHost(data: { service_app: number; host_name: string; is_active: boolean }) {
-  return apiFetch('/admin/allowed-hosts/', {
+  return apiFetch('/allowed-hosts/', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateAllowedHost(id: number, data: { host_name?: string; is_active?: boolean }) {
-  return apiFetch(`/admin/allowed-hosts/${id}/`, {
+  return apiFetch(`/allowed-hosts/${id}/`, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteAllowedHost(id: number) {
-  return apiFetch(`/admin/allowed-hosts/${id}/`, {
+  return apiFetch(`/allowed-hosts/${id}/`, {
     method: 'DELETE',
   });
 }
 
 export async function getApiLogs() {
-  return apiFetch('/admin/api-logs/');
+  return apiFetch('/api-logs/');
 }
 
 export async function getCallbacks() {
-  return apiFetch('/admin/callbacks/');
+  return apiFetch('/callbacks/');
 }

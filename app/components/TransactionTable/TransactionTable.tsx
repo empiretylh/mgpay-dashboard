@@ -49,7 +49,8 @@ const TransactionTable = ({
         transaction.id.toString().includes(term) ||
         transaction.provider.toLowerCase().includes(term) ||
         (transaction.service_app_name && transaction.service_app_name.toLowerCase().includes(term)) ||
-        (transaction.reference_id && transaction.reference_id.toLowerCase().includes(term))
+        (transaction.reference_id && transaction.reference_id.toLowerCase().includes(term)) ||
+        (transaction.transaction_id && transaction.transaction_id.toLowerCase().includes(term))
     );
   }, [transactions, searchTerm]);
 
@@ -127,8 +128,8 @@ const TransactionTable = ({
                   className="border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
                   <td className="py-4 px-4">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      #{transaction.id}
+                    <span className="text-sm font-medium text-gray-900 dark:text-white break-all">
+                      #{transaction.transaction_id || transaction.reference_id || transaction.id}
                     </span>
                   </td>
                   <td className="py-4 px-4">

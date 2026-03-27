@@ -60,7 +60,8 @@ export default function TransactionPage() {
     const matchesSearch = searchTerm === '' || 
       tx.id.toString().includes(searchTerm) ||
       (tx.reference_id && tx.reference_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      tx.provider.toLowerCase().includes(searchTerm.toLowerCase());
+      (tx.transaction_id && tx.transaction_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (tx.provider && tx.provider.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesSearch;
   });
 
@@ -135,7 +136,7 @@ export default function TransactionPage() {
                   <tbody>
                     {displayedTransactions.map((tx) => (
                       <tr key={tx.id} className="border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                        <td className="py-4 px-6 text-sm font-medium text-gray-900 dark:text-white">#{tx.id}</td>
+                        <td className="py-4 px-6 text-sm font-medium text-gray-900 dark:text-white break-all">#{tx.transaction_id || tx.reference_id || tx.id}</td>
                         <td className="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">{tx.service_app_name || `App #${tx.service_app}`}</td>
                         <td className="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">{tx.provider}</td>
                         <td className="py-4 px-6 text-sm font-semibold text-gray-900 dark:text-white text-right">{formatCurrency(tx.amount)}</td>

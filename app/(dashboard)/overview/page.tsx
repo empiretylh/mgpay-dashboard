@@ -34,7 +34,7 @@ export default function OverviewPage() {
 
   const findProviderBalance = (names: string[]) =>
     summary.provider_balances.find(p =>
-      names.some(n => p.provider.toLowerCase() === n.toLowerCase())
+      names.some(n => p.provider?.toLowerCase() === n.toLowerCase())
     )?.total_amount || '0';
 
   const kbzBalance = findProviderBalance(['kbzpay', 'KBZ Pay']);
