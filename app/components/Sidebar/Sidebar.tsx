@@ -19,6 +19,8 @@ import {
   Moon,
   Sun,
   LogOut,
+  Download,
+  Globe,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { logout } from '@/app/lib/api';
@@ -38,6 +40,8 @@ const Sidebar = ({ isOpen = true, onClose }: SidebarProps) => {
     { icon: LayoutDashboard, label: 'Dashboard', href: '/overview' },
     { icon: Receipt, label: 'Transactions', href: '/transaction' },
     { icon: AppWindow, label: 'Service Apps', href: '/service-apps' },
+    { icon: Download, label: 'Balance Exports', href: '/balance-exports' },
+    { icon: Globe, label: 'Allowed Hosts', href: '/allowed-hosts' },
     { icon: BarChart3, label: 'Financial Reports', href: '/reports' },
     { icon: CreditCard, label: 'Payment Methods', href: '/payment-methods' },
     { icon: Monitor, label: 'H5 Payment Page', href: '/h5-payment' },

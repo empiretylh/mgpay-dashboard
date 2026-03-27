@@ -26,7 +26,7 @@ export default function ReportsPage() {
   }, []);
 
   const totalBalance = summary.provider_balances.reduce((sum, p) => sum + parseFloat(p.total_amount), 0);
-  const totalTransactions = summary.service_app_stats.reduce((sum, s) => sum + s.total_transactions, 0);
+  const totalTransactions = summary.service_app_stats.reduce((sum, s) => sum + (typeof s.total_transactions === 'number' ? s.total_transactions : parseFloat(s.total_transactions) || 0), 0);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
