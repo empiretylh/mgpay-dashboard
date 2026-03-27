@@ -32,9 +32,14 @@ export default function OverviewPage() {
     fetchData();
   }, []);
 
-  const kbzBalance = summary.provider_balances.find(p => p.provider === 'KBZ Pay')?.total_amount || '0';
-  const waveBalance = summary.provider_balances.find(p => p.provider === 'Wave Pay')?.total_amount || '0';
-  const ayaBalance = summary.provider_balances.find(p => p.provider === 'AYA Pay')?.total_amount || '0';
+  const findProviderBalance = (names: string[]) =>
+    summary.provider_balances.find(p =>
+      names.some(n => p.provider.toLowerCase() === n.toLowerCase())
+    )?.total_amount || '0';
+
+  const kbzBalance = findProviderBalance(['kbzpay', 'KBZ Pay']);
+  const waveBalance = findProviderBalance(['wavepay', 'Wave Pay']);
+  const ayaBalance = findProviderBalance(['ayapay', 'AYA Pay']);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">

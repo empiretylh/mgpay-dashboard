@@ -18,7 +18,45 @@ export interface ProviderBalance {
 export interface ServiceAppStat {
   id: number;
   name: string;
-  total_transactions: number;
+  total_transactions: string | number;
+}
+
+export interface BalanceExport {
+  id: number;
+  service_app: number;
+  service_app_name?: string;
+  amount: string;
+  created_at: string;
+}
+
+export interface AllowedHost {
+  id: number;
+  service_app: number;
+  service_app_name?: string;
+  host_name: string;
+  is_active: boolean;
+  created_at?: string;
+}
+
+export interface ApiLog {
+  id: number;
+  provider?: string;
+  method?: string;
+  url?: string;
+  request_data?: string;
+  response_data?: string;
+  status_code?: number;
+  created_at: string;
+}
+
+export interface CallbackLog {
+  id: number;
+  service_app?: number;
+  service_app_name?: string;
+  provider?: string;
+  payload?: string;
+  status?: string;
+  created_at: string;
 }
 
 export interface DashboardSummary {

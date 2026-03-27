@@ -180,6 +180,19 @@ export async function createAllowedHost(data: { service_app: number; host_name: 
   });
 }
 
+export async function updateAllowedHost(id: number, data: { host_name?: string; is_active?: boolean }) {
+  return apiFetch(`/admin/allowed-hosts/${id}/`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteAllowedHost(id: number) {
+  return apiFetch(`/admin/allowed-hosts/${id}/`, {
+    method: 'DELETE',
+  });
+}
+
 export async function getApiLogs() {
   return apiFetch('/admin/api-logs/');
 }
