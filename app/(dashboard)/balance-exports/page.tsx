@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, X } from 'lucide-react';
-import { getBalanceExports, createBalanceExport, getServiceApps } from '@/app/lib/api';
+import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { getBalanceExports, createBalanceExport, updateBalanceExport, deleteBalanceExport, getServiceApps } from '@/app/lib/api';
 import { formatCurrency, formatDate, type BalanceExport, type ServiceApp } from '@/app/lib/data';
 
 export default function BalanceExportsPage() {
@@ -12,10 +12,15 @@ export default function BalanceExportsPage() {
 
   // Modal state
   const [showModal, setShowModal] = useState(false);
+  const [editingExport, setEditingExport] = useState<BalanceExport | null>(null);
   const [formServiceApp, setFormServiceApp] = useState('');
   const [formAmount, setFormAmount] = useState('');
+  const [formDescription, setFormDescription] = useState('');
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
+
+  // Delete confirm state
+  const [deletingExport, setDeletingExport] = useState<BalanceExport | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,17 +40,30 @@ export default function BalanceExportsPage() {
     fetchData();
   }, []);
 
-  const openModal = () => {
+  const openCreateModal = () => {
+    setEditingExport(null);
     setFormServiceApp('');
     setFormAmount('');
+    setFormDescription('');
+    setFormError('');
+    setShowModal(true);
+  };
+
+  const openEditModal = (exp: BalanceExport) => {
+    setEditingExport(exp);
+    setFormServiceApp(exp.service_app.toString());
+    setFormAmount(exp.amount.toString());
+    setFormDescription(exp.description || '');
     setFormError('');
     setShowModal(true);
   };
 
   const closeModal = () => {
     setShowModal(false);
+    setEditingExport(null);
     setFormServiceApp('');
     setFormAmount('');
+    setFormDescription('');
     setFormError('');
   };
 
@@ -54,16 +72,37 @@ export default function BalanceExportsPage() {
     setFormError('');
     setFormLoading(true);
     try {
-      const created = await createBalanceExport({
-        service_app: parseInt(formServiceApp),
-        amount: formAmount,
-      });
-      setExports(prev => [created, ...prev]);
+      if (editingExport) {
+        const updated = await updateBalanceExport(editingExport.id, {
+          amount: formAmount,
+          description: formDescription,
+        });
+        setExports(prev => prev.map(exp => (exp.id === editingExport.id ? { ...exp, ...updated } : exp)));
+      } else {
+        const created = await createBalanceExport({
+          service_app: parseInt(formServiceApp),
+          amount: formAmount,
+          description: formDescription,
+        });
+        setExports(prev => [created, ...prev]);
+      }
       closeModal();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Operation failed');
     } finally {
       setFormLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deletingExport) return;
+    try {
+      await deleteBalanceExport(deletingExport.id);
+      setExports(prev => prev.filter(exp => exp.id !== deletingExport.id));
+    } catch (err) {
+      console.error('Failed to delete balance export:', err);
+    } finally {
+      setDeletingExport(null);
     }
   };
 
@@ -78,7 +117,7 @@ export default function BalanceExportsPage() {
             </p>
           </div>
           <button
-            onClick={openModal}
+            onClick={openCreateModal}
             className="px-5 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2"
           >
             <Plus size={20} />
@@ -104,8 +143,10 @@ export default function BalanceExportsPage() {
                   <tr className="border-b border-gray-100 dark:border-gray-800">
                     <th className="text-left py-4 px-6 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">ID</th>
                     <th className="text-left py-4 px-6 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">Service App</th>
+                    <th className="text-left py-4 px-6 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">Description</th>
                     <th className="text-right py-4 px-6 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">Amount</th>
                     <th className="text-left py-4 px-6 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">Date</th>
+                    <th className="text-right py-4 px-6 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -115,11 +156,30 @@ export default function BalanceExportsPage() {
                       <td className="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">
                         {exp.service_app_name || `App #${exp.service_app}`}
                       </td>
+                      <td className="py-4 px-6 text-sm text-gray-600 dark:text-gray-400 max-w-[200px] truncate">
+                        {exp.description || '—'}
+                      </td>
                       <td className="py-4 px-6 text-sm font-semibold text-gray-900 dark:text-white text-right">
                         {formatCurrency(exp.amount)}
                       </td>
                       <td className="py-4 px-6 text-sm text-gray-600 dark:text-gray-400">
-                        {formatDate(exp.created_at)}
+                        {formatDate(exp.export_date || exp.created_at)}
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => openEditModal(exp)}
+                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                          >
+                            <Edit size={16} className="text-gray-600 dark:text-gray-400" />
+                          </button>
+                          <button
+                            onClick={() => setDeletingExport(exp)}
+                            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          >
+                            <Trash2 size={16} className="text-red-500" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -130,12 +190,14 @@ export default function BalanceExportsPage() {
         </div>
       </div>
 
-      {/* Create Modal */}
+      {/* Create / Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">New Balance Export</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                {editingExport ? 'Edit Balance Export' : 'New Balance Export'}
+              </h2>
               <button onClick={closeModal} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                 <X size={20} className="text-gray-600 dark:text-gray-400" />
               </button>
@@ -154,7 +216,8 @@ export default function BalanceExportsPage() {
                   value={formServiceApp}
                   onChange={e => setFormServiceApp(e.target.value)}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  disabled={!!editingExport} // Once created, cannot change service app for that export
+                  className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 focus:bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-75 disabled:cursor-not-allowed"
                 >
                   <option value="">Select a service app</option>
                   {serviceApps.map(app => (
@@ -177,6 +240,19 @@ export default function BalanceExportsPage() {
                   className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  value={formDescription}
+                  onChange={e => setFormDescription(e.target.value)}
+                  required
+                  placeholder="e.g. export description"
+                  className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
@@ -190,10 +266,36 @@ export default function BalanceExportsPage() {
                   disabled={formLoading}
                   className="flex-1 px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-semibold hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {formLoading ? 'Creating...' : 'Create Export'}
+                  {formLoading ? 'Saving...' : editingExport ? 'Save Changes' : 'Create Export'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingExport && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-sm p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Delete Export</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete this balance export for #{deletingExport.service_app}? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeletingExport(null)}
+                className="flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

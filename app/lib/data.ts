@@ -27,7 +27,9 @@ export interface BalanceExport {
   service_app: number;
   service_app_name?: string;
   amount: string;
-  created_at: string;
+  description?: string;
+  created_at?: string;
+  export_date?: string;
 }
 
 export interface AllowedHost {
@@ -69,9 +71,20 @@ export interface DashboardSummary {
 export interface ServiceApp {
   id: number;
   name: string;
+  description: string | null;
+  logo_url: string | null;
+  website_url: string | null;
+  contact_email: string | null;
+  phone_number: string | null;
   api_token: string;
   callback_url: string;
+  redirect_url: string | null;
   is_active: boolean;
+  is_verified: boolean;
+  allow_kbz_qr: boolean;
+  allow_aya_qr: boolean;
+  allow_aya_push: boolean;
+  allow_wave_pay: boolean;
   created_at: string;
 }
 
@@ -180,33 +193,77 @@ export const mockServiceApps: ServiceApp[] = [
   {
     id: 1,
     name: 'E-Commerce Platform',
+    description: 'E-commerce test integration',
+    logo_url: null,
+    website_url: 'https://ecommerce.example.com',
+    contact_email: 'dev@ecommerce.example.com',
+    phone_number: null,
     api_token: 'mgpay_tok_xxxxxxxxxxxxxxxxxxxxxx1234',
     callback_url: 'https://ecommerce.example.com/webhook',
+    redirect_url: null,
     is_active: true,
+    is_verified: true,
+    allow_kbz_qr: true,
+    allow_aya_qr: true,
+    allow_aya_push: false,
+    allow_wave_pay: true,
     created_at: '2024-01-15T10:00:00Z',
   },
   {
     id: 2,
     name: 'Food Delivery App',
+    description: null,
+    logo_url: null,
+    website_url: null,
+    contact_email: null,
+    phone_number: null,
     api_token: 'mgpay_tok_xxxxxxxxxxxxxxxxxxxxxx5678',
     callback_url: 'https://fooddelivery.example.com/webhook',
+    redirect_url: null,
     is_active: true,
+    is_verified: false,
+    allow_kbz_qr: true,
+    allow_aya_qr: false,
+    allow_aya_push: false,
+    allow_wave_pay: false,
     created_at: '2024-01-20T14:30:00Z',
   },
   {
     id: 3,
     name: 'Ride Sharing',
+    description: null,
+    logo_url: null,
+    website_url: null,
+    contact_email: null,
+    phone_number: null,
     api_token: 'mgpay_tok_xxxxxxxxxxxxxxxxxxxxxx9012',
     callback_url: 'https://rideshare.example.com/webhook',
+    redirect_url: null,
     is_active: true,
+    is_verified: true,
+    allow_kbz_qr: true,
+    allow_aya_qr: false,
+    allow_aya_push: false,
+    allow_wave_pay: true,
     created_at: '2024-02-01T09:15:00Z',
   },
   {
     id: 4,
     name: 'Ticketing System',
+    description: null,
+    logo_url: null,
+    website_url: null,
+    contact_email: null,
+    phone_number: null,
     api_token: 'mgpay_tok_xxxxxxxxxxxxxxxxxxxxxx3456',
     callback_url: 'https://tickets.example.com/webhook',
+    redirect_url: null,
     is_active: false,
+    is_verified: false,
+    allow_kbz_qr: true,
+    allow_aya_qr: false,
+    allow_aya_push: false,
+    allow_wave_pay: false,
     created_at: '2024-02-10T16:45:00Z',
   },
 ];
@@ -237,8 +294,12 @@ export const formatCurrency = (amount: string | number): string => {
 };
 
 // Format date
-export const formatDate = (dateString: string): string => {
+export const formatDate = (dateString?: string): string => {
+  if (!dateString) return '—';
+  
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '—';
+
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',

@@ -138,7 +138,7 @@ export async function getServiceApps() {
   return apiFetch('/service-apps/');
 }
 
-export async function createServiceApp(data: { name: string; callback_url: string }) {
+export async function createServiceApp(data: any) {
   return apiFetch('/service-apps/', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -159,13 +159,26 @@ export async function deleteServiceApp(id: number) {
 }
 
 export async function getBalanceExports() {
-  return apiFetch('/admin/balance-exports/');
+  return apiFetch('/balance-exports/');
 }
 
-export async function createBalanceExport(data: { service_app: number; amount: string }) {
-  return apiFetch('/admin/balance-exports/', {
+export async function createBalanceExport(data: { service_app: number; amount: string | number; description: string }) {
+  return apiFetch('/balance-exports/', {
     method: 'POST',
     body: JSON.stringify(data),
+  });
+}
+
+export async function updateBalanceExport(id: number, data: { amount?: string | number; description?: string }) {
+  return apiFetch(`/balance-exports/${id}/`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteBalanceExport(id: number) {
+  return apiFetch(`/balance-exports/${id}/`, {
+    method: 'DELETE',
   });
 }
 
