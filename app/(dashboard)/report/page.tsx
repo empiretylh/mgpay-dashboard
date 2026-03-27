@@ -1,10 +1,14 @@
-export default function ReportPage() {
-  return (
-    <div className="flex-1 flex items-center justify-center p-8">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Report</h1>
-        <p className="text-gray-600 dark:text-gray-400">Coming soon...</p>
-      </div>
-    </div>
-  );
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function RedirectPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/reports');
+  }, [router]);
+
+  return null;
 }
